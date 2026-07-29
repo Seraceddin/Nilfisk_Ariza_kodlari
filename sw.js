@@ -1,24 +1,40 @@
-const CACHE_NAME = 'ariza-kodlari-v2';
-const ASSETS = [
+const CACHE_NAME = 'nilfisk-ariza-v3'; // Her güncellemede burayı v4, v5 yapabilirsin
+const assets = [
   './',
   './index.html',
   './manifest.json'
 ];
 
-// Dosyaları Önbelleğe Alma (Yükleme Aşaması)
-self.addEventListener('install', (e) => {
-  e.waitUntil(
+// 1. Yeni dosyaları yükle ve beklemeden aktif et
+self.addEventListener('install', (event) => {
+  self.skipWaiting(); 
+  event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(ASSETS);
+      return cache.addAll(assets);
     })
   );
 });
 
-// İnternet Olmadığında Önbellekten Çalıştırma
-self.addEventListener('fetch', (e) => {
-  e.respondWith(
-    caches.match(e.request).then((response) => {
-      return response || fetch(e.request);
+// 2. Eski versiyon hafızasını TELEFONDAN OTOMATİK SİL
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keys) => {
+      return Promise.all(
+        keys.map((key) => {
+          if (key !== CACHE_NAME) {
+            return caches.delete(key); // Eski sürümleri temizler
+          }
+        })
+      );
+    }).then(() => self.clients.claim())
+  );
+});
+
+// 3. Ağı kontrol et, yenisi varsa hemen getir
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    fetch(event.request).catch(() => {
+      return caches.match(event.request);
     })
   );
 });
