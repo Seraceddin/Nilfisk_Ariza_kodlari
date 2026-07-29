@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nilfisk Arıza Kodları</title>
+
+  <!-- PWA Bağlantıları -->
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#2563eb">
+
+  <style>
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: #f3f4f6; margin: 0; padding: 15px; }
+    .container { max-width: 650px; margin: 0 auto; }
+    
+    /* Header & Başlık */
+    .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
+    h1 { color: #1e293b; margin: 0; font-size: 22px; }
+    .btn-back {
+      background: #e2e8f0; border: none; padding: 8px 14px;
+      border-radius: 6px; font-weight: bold; cursor: pointer; color: #475569;
+    }
+    
+    /* Makine Seçim Ekranı Grid */
+    .machine-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin-top: 20px; }
+    .machine-card {
+      background: white; padding: 22px; border-radius: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05); text-align: center;
+      cursor: pointer; border: 2px solid transparent; transition: all 0.2s;
+    }
+    .machine-card:hover { border-color: #2563eb; transform: translateY(-2px); }
+    .machine-title { font-size: 22px; font-weight: bold; color: #1e293b; }
+    .machine-subtitle { color: #64748b; font-size: 14px; margin-top: 5px; }
+
+    /* Arama Çubuğu */
+    .search-box {
+      width: 100%; padding: 14px; font-size: 16px;
+      border: 2px solid #cbd5e1; border-radius: 8px; margin-bottom: 20px; outline: none;
+    }
+    .search-box:focus { border-color: #2563eb; }
+
+    /* TABLO TASARIMI */
+    .error-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .error-table th, .error-table td {
+      padding: 14px 16px;
+      text-align: left;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .error-table th {
+      background-color: #2563eb;
+      color: white;
+      font-size: 15px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .error-table tr:last-child td { border-bottom: none; }
+    .error-table tr:hover { background-color: #f8fafc; }
+
+    /* Sol Sütun (Kod) */
+    .code-cell {
+      width: 120px;
+      font-weight: bold;
+      color: #dc2626;
+      font-size: 15px;
+      vertical-align: top;
+      white-space: nowrap;
+    }
+
+    /* Sağ Sütun (Açıklama) */
+    .desc-cell .title { font-weight: bold; color: #1e293b; font-size: 15px; margin-bottom: 4px; }
+    .desc-cell .detail { color: #475569; font-size: 14px; line-height: 1.4; }
+    
+    /* Gizleme Sınıfı */
+    .hidden { display: none !important; }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    
+    <!-- 1. EKRAN: MAKİNE SEÇİMİ -->
+    <div id="selectionScreen">
+      <h1 style="text-align: center; margin-top: 20px;">🚜 Makine Modelini Seçin</h1>
+      <div class="machine-grid">
+        <div class="machine-card" onclick="selectMachine('855')">
+          <div class="machine-title">Nilfisk BR855 / BR755</div>
+          <div class="machine-subtitle">Arıza Kodları ve Çözümleri</div>
+        </div>
+        <div class="machine-card" onclick="selectMachine('6000')">
+          <div class="machine-title">Nilfisk SC6000</div>
+          <div class="machine-subtitle">Arıza Kodları ve Çözümleri</div>
+        </div>
+        <div class="machine-card" onclick="selectMachine('6500')">
+          <div class="machine-title">Nilfisk SC6500</div>
+          <div class="machine-subtitle">Arıza Kodları ve Çözümleri</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. EKRAN: ARIZA KODLARI LİSTESİ (TABLO) -->
+    <div id="detailScreen" class="hidden">
+      <div class="header">
+        <h1 id="selectedMachineTitle">Arıza Kodları</h1>
+        <button class="btn-back" onclick="showSelectionScreen()">← Geri</button>
+      </div>
+
+      <input type="text" id="searchInput" class="search-box" placeholder="Kod veya arıza açıklaması yazın (Örn: 03 veya Fırça)..." onkeyup="searchErrors()">
+      
+      <table class="error-table">
+        <thead>
+          <tr>
+            <th>Kod</th>
+            <th>Açıklama ve Çözüm</th>
+          </tr>
+        </thead>
+        <tbody id="resultsTableBody">
+          <!-- Kodlar buraya dinamik dolacak -->
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <script>
+    // TÜM MAKİNELERİN HATA KODLARI VERİ TABANI
+    const database = {
+      "855": [
+        { code: "Hata 03", title: "Sürüş Kontrol / Hız Sürücüsü Arızası", desc: "Tekerlek sürüş kartında hata. Pedal bağlantısını, gaz potansiyometresini ve sürücü kartını kontrol edin." },
+        { code: "Hata 04", title: "Fırça Tahtası Kaldırma Aktüatörü Aşırı Yük", desc: "Fırça gövdesini kaldıran aktüatör zorlanıyor veya mekanik olarak sıkışmış. Kablo hatlarını ve zorlanmayı kontrol edin." },
+        { code: "Hata 05", title: "Fırça Motoru Aşırı Yük", desc: "Fırça motorları aşırı akım çekiyor. Fırçalara takılan cisim olup olmadığını veya yan eteklerin sıkışıp sıkışmadığını kontrol edin." },
+        { code: "Hata 06", title: "Silici (Squeegee) Aktüatörü Aşırı Yük", desc: "Arka siliciyi kaldıran aktüatör mekanik olarak sıkışmış veya motor bobininde kısa devre var." },
+        { code: "Hata 07", title: "Vakum Motoru Aşırı Yük", desc: "Vakum motoru yüksek akım çekiyor. Motor rulmanlarını, karbon fırçaları veya tıkanıklığı kontrol edin." },
+        { code: "Hata 08", title: "Su Selenoid Valfi Aşırı Yük", desc: "Temiz su selonoid valf bobininde kısa devre veya kablo hatası var." },
+        { code: "Hata 09", title: "Vakum Kontaktör Bobini Aşırı Yük", desc: "K1 Vakum kontaktörünün bobininde kısa devre var." },
+        { code: "Hata 10", title: "Fırça Kontaktör Bobini Aşırı Yük", desc: "K2 Fırça kontaktörünün bobininde kısa devre veya kablolama hatası var." },
+        { code: "Hata 11", title: "Deterjan Pompası Aşırı Yük (AXP/EDS)", desc: "Kimyasal dozaj pompası aşırı akım çekiyor veya arızalı." },
+        { code: "Hata 30", title: "Su Selenoid Valfi Açık Devre", desc: "Selenoid valf kablo soketi çıkmış veya valf sargısı kopuk." },
+        { code: "Hata 31", title: "Fırça Motoru Açık Devre", desc: "Fırça motor kablolarında kopukluk, aşınmış fırça veya K2 kontaktör kontak hatası." },
+        { code: "Hata 32", title: "Fırça Kaldırma Aktüatörü Açık Devre", desc: "Fırça aktüatörünün kablosu çıkmış veya aktüatör motoru arızalı." },
+        { code: "Hata 33", title: "Vakum Motoru Açık Devre", desc: "Vakum motoru kablo bağlantısı kopuk veya K1 kontaktör kontakları açmıyor." },
+        { code: "Hata 34", title: "Silici Aktüatörü Açık Devre", desc: "Silici aktüatörünün elektrik bağlantısı kopuk veya motor arızalı." },
+        { code: "Hata 35", title: "Fırça Kontaktör Bobini Açık Devre", desc: "K2 kontaktör bobin sargısı kopuk veya kablo soketi gevşek." },
+        { code: "Hata 36", title: "Vakum Kontaktör Bobini Açık Devre", desc: "K1 kontaktör bobin sargısı kopuk veya kablo soketi gevşek." },
+        { code: "Hata 37", title: "Deterjan Pompası Açık Devre", desc: "Kimyasal pompa soketi yerinden çıkmış veya açık devre." },
+        { code: "Hata 60", title: "Fırça Kontaktörü Yapışık Kaldı", desc: "K2 Fırça kontaktörünün kontakları yapışmış (0 ohm). Kontaktörü değiştirin." },
+        { code: "Hata 61", title: "Vakum Kontaktörü Yapışık Kaldı", desc: "K1 Vakum kontaktörünün kontakları yapışmış. Kontaktörü değiştirin." },
+        { code: "Hata 62", title: "Su Selonoid Valfi Kontrol Hatası", desc: "Ana kart üzerinde selonoid valf sürüş katı arızalı." },
+        { code: "Hata 63", title: "Fırça Kontaktör Bobini Kontrol Hatası", desc: "Ana kart üzerinde fırça kontaktörü sürüş katı arızalı." },
+        { code: "Hata 64", title: "Vakum Kontaktör Bobini Kontrol Hatası", desc: "Ana kart üzerinde vakum kontaktörü sürüş katı arızalı." }
+      ],
+      "6000": [
+        { code: "Hata 01", title: "CAN-Bus Haberleşme Arızası", desc: "Ekran kartı ile ana kontrol kartı arasındaki haberleşme hatası. Soketleri ve kablo demetini kontrol edin." },
+        { code: "Hata 02", title: "Acil Stop Butonu Basılı", desc: "Acil stop butonunun basılı olup olmadığını kontrol edin ve çevirerek sıfırlayın." },
+        { code: "Hata 03", title: "Sürüş Motoru Sürücü Arızası", desc: "Sürüş kartında aşırı ısınma, yüksek akım veya pedal potansiyometre arızası." },
+        { code: "Hata 04", title: "Fırça Motoru / Kaldırma Aşırı Yük", desc: "Fırçaların dönmesini engelleyen yabancı madde var veya fırça aktüatörü zorlanıyor." },
+        { code: "Hata 05", title: "Vakum Motoru Arızası", desc: "Vakum motoru akım çekemiyor veya aşırı yüklenmiş. Kirli su tankı şamandırasını kontrol edin." },
+        { code: "Hata 06", title: "Silici (Squeegee) Aktüatör Arızası", desc: "Silici kaldırma motorunda mekanik sıkışma veya açık devre hatası." },
+        { code: "Hata 07", title: "Su Selenoid Valf Arızası", desc: "Deterjan/Su selonoid valf soketi yerinden çıkmış veya valf tıkalı." },
+        { code: "Hata 08", title: "Koltuk Güvenlik Şalteri Açık", desc: "Kullanıcı koltukta oturmuyor veya koltuk altındaki emniyet anahtarı arızalı." }
+      ],
+      "6500": [
+        { code: "Hata 01", title: "Sürüş Motoru Aşırı Akım Hatası", desc: "Sürüş motoru aşırı yüke bindi. Frenlerin kilitli kalıp kalmadığını ve motor karbon fırçalarını kontrol edin." },
+        { code: "Hata 02", title: "Gaz Pedalı / Sürücü Potansiyometre Arızası", desc: "Pedal potansiyometresinden hatalı voltaj geliyor veya sinyal kablosu kopuk." },
+        { code: "Hata 05", title: "Ana Fırça Motoru Akım Aşımı", desc: "Fırça motorları fazla akım çekiyor. Fırça rulmanlarını ve zemindeki sıkışmayı kontrol edin." },
+        { code: "Hata 06", title: "Yan Fırça (Side Broom) Motor Arızası", desc: "Opsiyonel yan fırça motoru devre dışı veya 20A sigortası (F3) atmış." },
+        { code: "Hata 09", title: "Vakum Motoru Devre Dışı / Aşırı Yük", desc: "Vakum motoru aşırı akım çekti veya şamandıra şalteri devreyi kesti." },
+        { code: "Hata 12", title: "Silici Aktüatör Sıkışma Arızası", desc: "Arka silici aktüatörü inip kalkarken limite ulaşamadı." },
+        { code: "Hata 40", title: "K5 Yardımcı Motor Kontaktör Arızası", desc: "K5 kontaktör bobini şaseye kısa devre yapmış (Sarı/Kahve kablo hattı)." },
+        { code: "Hata 41", title: "Geri Vites Alarmı Açık Devre", desc: "Geri vites korna/sesli ikaz aygıtının (H1) kablosu kopuk." },
+        { code: "Hata 42", title: "Geri Vites Alarmı Şaseye Kısa Devre", desc: "Geri vites sesli ikaz tesisatında kısa devre var." }
+      ]
+    };
+
+    let activeMachine = "";
+
+    // Makine Seçildiğinde Çalışacak Fonksiyon
+    function selectMachine(machineId) {
+      activeMachine = machineId;
+      document.getElementById('selectionScreen').classList.add('hidden');
+      document.getElementById('detailScreen').classList.remove('hidden');
+      document.getElementById('selectedMachineTitle').innerText = `Nilfisk ${machineId} Kodları`;
+      document.getElementById('searchInput').value = ''; 
+      
+      displayErrors(database[machineId] || []);
+    }
+
+    // Seçim Ekranına Geri Dönüş
+    function showSelectionScreen() {
+      document.getElementById('detailScreen').classList.add('hidden');
+      document.getElementById('selectionScreen').classList.remove('hidden');
+    }
+
+    // Kodları Tabloya Basma
+    function displayErrors(data) {
+      const tbody = document.getElementById('resultsTableBody');
+      tbody.innerHTML = '';
+
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="2" style="text-align:center; color:#94a3b8; padding:20px;">Bu makineye ait arıza kodu bulunamadı.</td></tr>';
+        return;
+      }
+
+      data.forEach(item => {
+        tbody.innerHTML += `
+          <tr>
+            <td class="code-cell">${item.code}</td>
+            <td class="desc-cell">
+              <div class="title">${item.title}</div>
+              <div class="detail">${item.desc}</div>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    // Makine İçi Arama
+    function searchErrors() {
+      const query = document.getElementById('searchInput').value.toLowerCase();
+      const currentList = database[activeMachine] || [];
+      
+      const filtered = currentList.filter(item => 
+        item.code.toLowerCase().includes(query) || 
+        item.title.toLowerCase().includes(query) ||
+        item.desc.toLowerCase().includes(query)
+      );
+      displayErrors(filtered);
+    }
+
+    // PWA Service Worker Kaydı
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js')
+        .then(() => console.log("PWA Servisi Aktif!"))
+        .catch(err => console.log("PWA Hatası:", err));
+    }
+  </script>
+</body>
+</html>
