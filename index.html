@@ -16,10 +16,10 @@
     
     /* Header & Başlık */
     .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    h1 { color: #1e293b; margin: 0; font-size: 22px; }
+    h1 { color: #1e293b; margin: 0; font-size: 24px; } /* 22px -> 24px */
     .btn-back {
-      background: #e2e8f0; border: none; padding: 8px 14px;
-      border-radius: 6px; font-weight: bold; cursor: pointer; color: #475569;
+      background: #e2e8f0; border: none; padding: 10px 16px;
+      border-radius: 6px; font-weight: bold; cursor: pointer; color: #475569; font-size: 16px;
     }
     
     /* Makine Seçim Ekranı Grid */
@@ -30,12 +30,12 @@
       cursor: pointer; border: 2px solid transparent; transition: all 0.2s;
     }
     .machine-card:hover { border-color: #2563eb; transform: translateY(-2px); }
-    .machine-title { font-size: 22px; font-weight: bold; color: #1e293b; }
-    .machine-subtitle { color: #64748b; font-size: 14px; margin-top: 5px; }
+    .machine-title { font-size: 24px; font-weight: bold; color: #1e293b; } /* 22px -> 24px */
+    .machine-subtitle { color: #64748b; font-size: 16px; margin-top: 5px; } /* 14px -> 16px */
 
     /* Arama Çubuğu */
     .search-box {
-      width: 100%; padding: 14px; font-size: 16px;
+      width: 100%; padding: 14px; font-size: 18px; /* 16px -> 18px */
       border: 2px solid #cbd5e1; border-radius: 8px; margin-bottom: 20px; outline: none;
     }
     .search-box:focus { border-color: #2563eb; }
@@ -57,7 +57,7 @@
     .error-table th {
       background-color: #2563eb;
       color: white;
-      font-size: 15px;
+      font-size: 17px; /* 15px -> 17px */
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
@@ -69,14 +69,14 @@
       width: 120px;
       font-weight: bold;
       color: #dc2626;
-      font-size: 15px;
+      font-size: 17px; /* 15px -> 17px */
       vertical-align: top;
       white-space: nowrap;
     }
 
     /* Sağ Sütun (Açıklama) */
-    .desc-cell .title { font-weight: bold; color: #1e293b; font-size: 15px; margin-bottom: 4px; }
-    .desc-cell .detail { color: #475569; font-size: 14px; line-height: 1.4; }
+    .desc-cell .title { font-weight: bold; color: #1e293b; font-size: 17px; margin-bottom: 4px; } /* 15px -> 17px */
+    .desc-cell .detail { color: #475569; font-size: 16px; line-height: 1.4; } /* 14px -> 16px */
     
     /* Gizleme Sınıfı */
     .hidden { display: none !important; }
