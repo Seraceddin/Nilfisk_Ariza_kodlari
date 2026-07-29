@@ -1,4 +1,4 @@
-const CACHE_NAME = 'ariza-kodlari-v1';
+const CACHE_NAME = 'ariza-kodlari-v2';
 const ASSETS = [
   './',
   './index.html',
