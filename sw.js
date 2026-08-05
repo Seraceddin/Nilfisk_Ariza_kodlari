@@ -1,4 +1,4 @@
-const CACHE_NAME = 'nilfisk-ariza-v6'; // Her güncellemede burayı v4, v5 yapabilirsin
+const CACHE_NAME = 'nilfisk-ariza-v7'; // Her güncellemede burayı v4, v5 yapabilirsin
 const assets = [
   './',
   './index.html',
