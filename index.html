@@ -10,36 +10,25 @@
   <meta name="theme-color" content="#2563eb">
 
   <style>
-/* Kapsayıcıyı ekran genişliğine göre esnek yapalım */
     .container { 
-      max-width: 900px; /* Geniş ekranlarda daha fazla açılması için yükselttik */
+      max-width: 900px;
       width: 100%; 
       margin: 0 auto; 
     }
 
-    /* YATAY EKRAN (LANDSCAPE) MODU ÖZEL AYARLARI */
     @media (orientation: landscape) {
-      body {
-        padding: 10px 25px; /* Yanlardan rahatlama payı */
-      }
-      .container {
-        max-width: 100%; /* Telefon yatayken ekranın tamamını kaplar */
-      }
-      .error-table th, .error-table td {
-        padding: 10px 18px; /* Yatayda yükseklikten kazanmak için dikey dolguyu biraz azalttık */
-      }
-      .desc-cell .detail {
-        font-size: 15px; /* Yatay ekranda okunabilirliği korur */
-      }
+      body { padding: 10px 25px; }
+      .container { max-width: 100%; }
+      .error-table th, .error-table td { padding: 10px 18px; }
+      .desc-cell .detail { font-size: 15px; }
     }
 
     * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
     body { background-color: #f3f4f6; margin: 0; padding: 15px; }
-    .container { max-width: 650px; margin: 0 auto; }
     
     /* Header & Başlık */
     .header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 20px; }
-    h1 { color: #1e293b; margin: 0; font-size: 24px; } /* 22px -> 24px */
+    h1 { color: #1e293b; margin: 0; font-size: 24px; }
     .btn-back {
       background: #e2e8f0; border: none; padding: 10px 16px;
       border-radius: 6px; font-weight: bold; cursor: pointer; color: #475569; font-size: 16px;
@@ -53,12 +42,12 @@
       cursor: pointer; border: 2px solid transparent; transition: all 0.2s;
     }
     .machine-card:hover { border-color: #2563eb; transform: translateY(-2px); }
-    .machine-title { font-size: 24px; font-weight: bold; color: #1e293b; } /* 22px -> 24px */
-    .machine-subtitle { color: #64748b; font-size: 16px; margin-top: 5px; } /* 14px -> 16px */
+    .machine-title { font-size: 24px; font-weight: bold; color: #1e293b; }
+    .machine-subtitle { color: #64748b; font-size: 16px; margin-top: 5px; }
 
     /* Arama Çubuğu */
     .search-box {
-      width: 100%; padding: 14px; font-size: 18px; /* 16px -> 18px */
+      width: 100%; padding: 14px; font-size: 18px;
       border: 2px solid #cbd5e1; border-radius: 8px; margin-bottom: 20px; outline: none;
     }
     .search-box:focus { border-color: #2563eb; }
@@ -80,28 +69,31 @@
     .error-table th {
       background-color: #2563eb;
       color: white;
-      font-size: 17px; /* 15px -> 17px */
+      font-size: 17px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
     }
     .error-table tr:last-child td { border-bottom: none; }
     .error-table tr:hover { background-color: #f8fafc; }
 
-    /* Sol Sütun (Kod) */
+    /* Sol Sütun (Kod/Tetikleyici) */
     .code-cell {
-      width: 120px;
+      width: 140px;
       font-weight: bold;
       color: #dc2626;
-      font-size: 17px; /* 15px -> 17px */
+      font-size: 16px;
       vertical-align: top;
-      white-space: nowrap;
+    }
+
+    /* Programlama Modu için Özel Etiket Rengi */
+    .prog-cell {
+      color: #0284c7;
     }
 
     /* Sağ Sütun (Açıklama) */
-    .desc-cell .title { font-weight: bold; color: #1e293b; font-size: 17px; margin-bottom: 4px; } /* 15px -> 17px */
-    .desc-cell .detail { color: #475569; font-size: 16px; line-height: 1.4; } /* 14px -> 16px */
+    .desc-cell .title { font-weight: bold; color: #1e293b; font-size: 17px; margin-bottom: 4px; }
+    .desc-cell .detail { color: #475569; font-size: 16px; line-height: 1.4; }
     
-    /* Gizleme Sınıfı */
     .hidden { display: none !important; }
   </style>
 </head>
@@ -111,7 +103,7 @@
     
     <!-- 1. EKRAN: MAKİNE SEÇİMİ -->
     <div id="selectionScreen">
-      <h1 style="text-align: center; margin-top: 40px;">🚜 Arıza Kodlar</h1>
+      <h1 style="text-align: center; margin-top: 40px;">🚜 Arıza Kodları ve Servis Rehberi</h1>
       <div class="machine-grid">
         <div class="machine-card" onclick="selectMachine('855')">
           <div class="machine-title">Nilfisk BR855 / BR755</div>
@@ -123,7 +115,7 @@
         </div>
         <div class="machine-card" onclick="selectMachine('6500')">
           <div class="machine-title">Nilfisk SC6500</div>
-          <div class="machine-subtitle">Arıza Kodları ve Çözümleri</div>
+          <div class="machine-subtitle">Arıza Kodları ve Programlama Güvertesi</div>
         </div>
       </div>
     </div>
@@ -135,17 +127,17 @@
         <button class="btn-back" onclick="showSelectionScreen()">← Geri</button>
       </div>
 
-      <input type="text" id="searchInput" class="search-box" placeholder="Kod veya arıza açıklaması yazın (Örn: 03 veya Fırça)..." onkeyup="searchErrors()">
+      <input type="text" id="searchInput" class="search-box" placeholder="Kod, ayar veya arıza açıklaması yazın..." onkeyup="searchErrors()">
       
       <table class="error-table">
         <thead>
           <tr>
-            <th>Kod</th>
-            <th>Açıklama ve Çözüm</th>
+            <th>Kod / Yöntem</th>
+            <th>Açıklama ve İşlev</th>
           </tr>
         </thead>
         <tbody id="resultsTableBody">
-          <!-- Kodlar buraya dinamik dolacak -->
+          <!-- Veriler dinamik olarak buraya dökülecek -->
         </tbody>
       </table>
     </div>
@@ -153,7 +145,6 @@
   </div>
 
   <script>
-    // TÜM MAKİNELERİN HATA KODLARI VERİ TABANI
     const database = {
       "855": [
         { code: "Hata 03", title: "Sürüş Kontrol / Hız Sürücüsü Arızası", desc: "Tekerlek sürüş kartında hata. Pedal bağlantısını, gaz potansiyometresini ve sürücü kartını kontrol edin." },
@@ -180,7 +171,6 @@
         { code: "Hata 64", title: "Vakum Kontaktör Bobini Kontrol Hatası", desc: "Ana kart üzerinde vakum kontaktörü sürüş katı arızalı." }
       ],
       "6000": [
-        // ANA KONTROL KARTI (E2) KODLARI (1-XXX)
         { code: "Hata 1-001", title: "K1 Bobin Açık Devre (KSI Rölesi)", desc: "KSI röle bobininde açık devre. Kablo bağlantılarını ve soketleri kontrol edin." },
         { code: "Hata 1-002", title: "K1 Bobin Kısa Devre", desc: "KSI röle bobin hattında kısa devre. Direksiyon kolonundaki kabloları kontrol edin veya röleyi değiştirin." },
         { code: "Hata 1-003", title: "K1 Kontak Yapışık (Weld)", desc: "Röle bobini kapalıyken çıkış aktif. Kablo kısa devresini kontrol edin veya yapışan röleyi değiştirin." },
@@ -195,8 +185,6 @@
         { code: "Hata 1-107", title: "M9 Kimyasal Pompa 2 Kısa Devre", desc: "2. deterjan pompasında kablo teması veya kısa devre." },
         { code: "Hata 1-201", title: "Su Deposu Seviye Sensörü Arızası", desc: "Temiz su deposundaki 4 seviye sensöründen biri çelişkili sinyal gönderiyor." },
         { code: "Hata 1-560", title: "EEPROM Konfigürasyon Hatası", desc: "EEPROM değerleri okunamıyor, varsayılan fabrika ayarlarına dönüldü." },
-
-        // GÜÇ MODÜLÜ (E3) KODLARI (2-XXX)
         { code: "Hata 2-001", title: "E3 Zaman Aşımı (Timeout)", desc: "Güç modülü ana karta 'heartbeat' sinyali gönderemiyor." },
         { code: "Hata 2-011", title: "Ön Şarj (Precharge) Başarısız", desc: "Kondansatör grubu KSI voltajına şarj olamadı. K2 rölesinin kapanmasına izin verilmez." },
         { code: "Hata 2-012", title: "K2 Rölesi Aşırı Yük", desc: "K2 ana güç rölesinden geçen akım belirlenen sınırın üzerinde." },
@@ -221,8 +209,6 @@
         { code: "Hata 2-066", title: "Kart Aşırı Sıcaklık Kesintisi", desc: "Güç modülü iç sıcaklığı kritik sınırı aştı, sistem kapatıldı." },
         { code: "Hata 2-076", title: "M6 Silici Aktüatörü Sıkışma (Stall)", desc: "Silici motoru kilitlendi. Zıt yönde çalıştırılmadan bu yönde çalışmaz." },
         { code: "Hata 2-077", title: "M7 Fırça Aktüatörü Sıkışma (Stall)", desc: "Fırça gövde aktüatörü kilitlendi (aşırı akım sınırına ulaşıldı)." },
-
-        // SÜRÜŞ SÜRÜCÜSÜ (E4) KODLARI (3-XXX)
         { code: "Hata 3-001", title: "E4 Sürüş Kartı İletişim Zaman Aşımı", desc: "Ana kart sürüş kartından (E4) yanıt alamıyor. CAN-Bus hattını kontrol edin." },
         { code: "Hata 3-012", title: "Sürüş Motoru Aşırı Akım (Overcurrent)", desc: "Motor faz akımı sınırı aştı. Sürüş motoru faz kablolarında kısa devre kontrolü yapın." },
         { code: "Hata 3-014", title: "Ön Şarj Başarısız (Precharge Fail)", desc: "Kondansatör grubu KSI voltajına ulaşamadı. K3 rölesi açılmaz. KSI hatasını kontrol edin." },
@@ -244,21 +230,33 @@
         { code: "Hata 3-073", title: "Motor Sıkışma (Stall)", desc: "Pedal basılı fakat enkoderden motor hareketi algılanmıyor." }
       ],
       "6500": [
-        { code: "Hata 01", title: "Sürüş Motoru Aşırı Akım Hatası", desc: "Sürüş motoru aşırı yüke bindi. Frenlerin kilitli kalıp kalmadığını ve motor karbon fırçalarını kontrol edin." },
-        { code: "Hata 02", title: "Gaz Pedalı / Sürücü Potansiyometre Arızası", desc: "Pedal potansiyometresinden hatalı voltaj geliyor veya sinyal kablosu kopuk." },
-        { code: "Hata 05", title: "Ana Fırça Motoru Akım Aşımı", desc: "Fırça motorları fazla akım çekiyor. Fırça rulmanlarını ve zemindeki sıkışmayı kontrol edin." },
-        { code: "Hata 06", title: "Yan Fırça (Side Broom) Motor Arızası", desc: "Opsiyonel yan fırça motoru devre dışı veya 20A sigortası (F3) atmış." },
-        { code: "Hata 09", title: "Vakum Motoru Devre Dışı / Aşırı Yük", desc: "Vakum motoru aşırı akım çekti veya şamandıra şalteri devreyi kesti." },
-        { code: "Hata 12", title: "Silici Aktüatör Sıkışma Arızası", desc: "Arka silici aktüatörü inip kalkarken limite ulaşamadı." },
-        { code: "Hata 40", title: "K5 Yardımcı Motor Kontaktör Arızası", desc: "K5 kontaktör bobini şaseye kısa devre yapmış (Sarı/Kahve kablo hattı)." },
-        { code: "Hata 41", title: "Geri Vites Alarmı Açık Devre", desc: "Geri vites korna/sesli ikaz aygıtının (H1) kablosu kopuk." },
-        { code: "Hata 42", title: "Geri Vites Alarmı Şaseye Kısa Devre", desc: "Geri vites sesli ikaz tesisatında kısa devre var." }
+        // ARIZA KODLARI
+        { type: "error", code: "Hata 01", title: "Sürüş Motoru Aşırı Akım Hatası", desc: "Sürüş motoru aşırı yüke bindi. Frenlerin kilitli kalıp kalmadığını ve motor karbon fırçalarını kontrol edin." },
+        { type: "error", code: "Hata 02", title: "Gaz Pedalı / Sürücü Potansiyometre Arızası", desc: "Pedal potansiyometresinden hatalı voltaj geliyor veya sinyal kablosu kopuk." },
+        { type: "error", code: "Hata 05", title: "Ana Fırça Motoru Akım Aşımı", desc: "Fırça motorları fazla akım çekiyor. Fırça rulmanlarını ve zemindeki sıkışmayı kontrol edin." },
+        { type: "error", code: "Hata 06", title: "Yan Fırça (Side Broom) Motor Arızası", desc: "Opsiyonel yan fırça motoru devre dışı veya 20A sigortası (F3) atmış." },
+        { type: "error", code: "Hata 09", title: "Vakum Motoru Devre Dışı / Aşırı Yük", desc: "Vakum motoru aşırı akım çekti veya şamandıra şalteri devreyi kesti." },
+        { type: "error", code: "Hata 12", title: "Silici Aktüatör Sıkışma Arızası", desc: "Arka silici aktüatörü inip kalkarken limite ulaşamadı." },
+        { type: "error", code: "Hata 40", title: "K5 Yardımcı Motor Kontaktör Arızası", desc: "K5 kontaktör bobini şaseye kısa devre yapmış (Sarı/Kahve kablo hattı)." },
+        { type: "error", code: "Hata 41", title: "Geri Vites Alarmı Açık Devre", desc: "Geri vites korna/sesli ikaz aygıtının (H1) kablosu kopuk." },
+        { type: "error", code: "Hata 42", title: "Geri Vites Alarmı Şaseye Kısa Devre", desc: "Geri vites sesli ikaz tesisatında kısa devre var." },
+        
+        // SC6500 PROGRAMLAMA GÜVERTESİ & SERVİS MENÜLERİ
+        { type: "prog", code: "GİZLİ MENÜ", title: "Arıza Geçmişi Modu (Fault Recall)", desc: "Kontak KAPALI iken [Deterjan/Su] tuşuna basılı tutup kontağı AÇIN. Hafızadaki arızaları okur. Silmek için [Fırça Kapatma] tuşuna basın." },
+        { type: "prog", code: "AYAR", title: "Akü Tipi Seçimi (Battery Type)", desc: "Kontak KAPALI iken [Fırça Kapatma] tuşuna basılı tutup kontağı AÇIN. Ekranda BATTERY yazınca tuşu bırakın. [Fırça Açma] ile Sulu/Jel seçip [Fırça Kapatma] ile kaydedin." },
+        { type: "prog", code: "RESET", title: "Fabrika Ayarlarına Dönüş (Restore Defaults)", desc: "Kontak KAPALI iken [Fırça Açma] tuşuna basılı tutup kontağı AÇIN. Ekranda anahtar simgesi çıkana kadar bekleyin." },
+        { type: "prog", code: "AYAR", title: "Geri Vites Su Akışı Kontrolü", desc: "Kontak KAPALI iken [EcoFlex] + [Su] tuşlarına basarak kontağı AÇIN. [Su] tuşu ile ENABLE/DISABLE seçin ve kaydedin." },
+        { type: "prog", code: "AYAR", title: "Ekran Görünüm Ayarı (US / Global)", desc: "Kontak KAPALI iken [Deterjan] + [EcoFlex] tuşlarına basarak kontağı AÇIN. [EcoFlex] tuşu ile mod seçin ve kaydedin." },
+        { type: "prog", code: "ZAMANLAMA", title: "Fırça Gövdesi Aşağı İniş Süresi", desc: "Kontak KAPALI iken [Fırça Açma] + [Su] tuşlarına basarak kontağı AÇIN. [Fırça Açma] ile süreyi 0.1s artırın (1.0 - 3.0s arası)." },
+        { type: "prog", code: "KALİBRASYON", title: "Yıkama Basınç Ayarları", desc: "Normal: [Fırça Açma]+[Fırça Hızı] | Ağır: [Fırça Açma]+[Deterjan] | Aşırı Ağır: [Fırça Açma]+[Vakum]. Fırça Açma ve Su tuşlarıyla değer verin." },
+        { type: "prog", code: "AYAR", title: "Yan Süpürge Yükseklik / Çalışma Süresi", desc: "Kontak KAPALI iken [Yan Süpürge] + [Fırça Kapatma] tuşlarına basarak kontağı AÇIN. Fırça Açma tuşu alçaltır, Yan Süpürge yükseltir." },
+        { type: "prog", code: "BAKIM", title: "Deterjan / Su Pompası Tahliye (Purge)", desc: "Kontak KAPALI iken [Deterjan] + [Su] tuşlarına basarak kontağı AÇIN. Pompa 20 saniye boyunca otomatik çalışarak havayı tahliye eder." },
+        { type: "prog", code: "TEST", title: "Servis Test Modu (Component Test)", desc: "Kontak KAPALI iken [Fırça Hızı] + [Çekiş Kontrolü] tuşlarına basarak kontağı AÇIN. Tüm aktüatör, motor ve bileşenleri bağımsız test edin." }
       ]
     };
 
     let activeMachine = "";
 
-    // Makine Seçildiğinde Çalışacak Fonksiyon
     function selectMachine(machineId) {
       activeMachine = machineId;
       document.getElementById('selectionScreen').classList.add('hidden');
@@ -269,13 +267,11 @@
       displayErrors(database[machineId] || []);
     }
 
-    // Seçim Ekranına Geri Dönüş
     function showSelectionScreen() {
       document.getElementById('detailScreen').classList.add('hidden');
       document.getElementById('selectionScreen').classList.remove('hidden');
     }
 
-    // Kodları Tabloya Basma
     function displayErrors(data) {
       const tbody = document.getElementById('resultsTableBody');
       tbody.innerHTML = '';
@@ -286,9 +282,10 @@
       }
 
       data.forEach(item => {
+        const isProg = item.type === "prog";
         tbody.innerHTML += `
           <tr>
-            <td class="code-cell">${item.code}</td>
+            <td class="code-cell ${isProg ? 'prog-cell' : ''}">${item.code}</td>
             <td class="desc-cell">
               <div class="title">${item.title}</div>
               <div class="detail">${item.desc}</div>
@@ -298,7 +295,6 @@
       });
     }
 
-    // Makine İçi Arama
     function searchErrors() {
       const query = document.getElementById('searchInput').value.toLowerCase();
       const currentList = database[activeMachine] || [];
@@ -311,7 +307,6 @@
       displayErrors(filtered);
     }
 
-    // PWA Service Worker Kaydı
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('sw.js')
         .then(() => console.log("PWA Servisi Aktif!"))
